@@ -2,6 +2,7 @@ package grid;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import list.SnakeList;
 
 public abstract class Grid {
 	
-	//private static final int NORTH = 0, EAST = 90, SOUTH = 180, WEST = 270;
 	public static enum Direction {
 		NORTH, EAST, SOUTH, WEST;
 
@@ -61,45 +61,52 @@ public abstract class Grid {
 	public abstract void act();
 	public abstract Color getColor(int num);
 	
-	public int getNumRows() {return row;}
-	public int getNumCols() {return col;}
-	public int getOriginalSpeed() {return originalSpeed;}
-	public int getNumPlayers() {return snakeLines.size();}
-	public void setDirection(int num, Direction direction) {getSnakeLine(num).setDirection(direction);}
-	public Direction getDirection(int num) {return getSnakeLine(num).getDirection();}
-	public int getScore(int num) {return getSnakeLine(num).getScore();}
-	public int getSpeed() {return speed;}
-	public boolean canTurn(int num) {return getSnakeLine(num).canTurn();}
-	public boolean isGameOver() {return gameOver;}
-	public boolean isPaused() {return pause;}
+	public int getNumRows() { return row; }
+	public int getNumCols() { return col; }
+	public int getOriginalSpeed() { return originalSpeed; }
+	public int getNumPlayers() { return snakeLines.size(); }
+	public void setDirection(int num, Direction direction) { getSnakeLine(num).setDirection(direction); }
+	public Direction getDirection(int num) { return getSnakeLine(num).getDirection(); }
+	public int getScore(int num) { return getSnakeLine(num).getScore(); }
+	public int getSpeed() { return speed; }
+	public boolean canTurn(int num) { return getSnakeLine(num).canTurn(); }
+	public boolean isGameOver() { return gameOver; }
+	public boolean isPaused() { return pause; }
 	
 	protected SnakeLine getSnakeLine(int num) {
 		num = num - 1;
 		if (num >= snakeLines.size()) num = snakeLines.size() - 1;
 		return snakeLines.get(num);
 	}
-	protected void set(Location loc, int num) {grid[loc.row][loc.col] = num;}
+	protected void set(Location loc, int num) { grid[loc.row][loc.col] = num; }
 	
 	public boolean isValid(Location p) {
 		return (0 <= p.row) && (p.row < getNumRows()) && (0 <= p.col) && (p.col < getNumCols());
 	}
 	
-	public int get(int row, int col) {return get(new Location(row, col));}
+	public int get(int row, int col) { return get(new Location(row, col)); }
 	public int get(Location loc) {
-		if(loc == null) throw new NullPointerException();
-		if(!isValid(loc)) throw new IllegalStateException();
+		if (loc == null) throw new NullPointerException();
+		if (!isValid(loc)) throw new IllegalStateException();
 		return grid[loc.row][loc.col];
 	}
 	
 	public void pause() {
-		for(SnakeLine snake: snakeLines) snake.pause();
+		for (SnakeLine snake: snakeLines) {
+			snake.pause();
+		}
 		pause = !pause;
 	}
 	
 	public void setCanTurn(int num, boolean turn) {
-		if(!turn) getSnakeLine(num).setCanTurn(false); 
-		else 
-			for(SnakeLine snake: snakeLines) snake.setCanTurn(true);
+		if (!turn) {
+			getSnakeLine(num).setCanTurn(false); 
+		}
+		else {
+			for (SnakeLine snake: snakeLines) {
+				snake.setCanTurn(true);
+			}
+		}
 			
 	}
 	
@@ -107,7 +114,9 @@ public abstract class Grid {
 		int r = (int)(Math.random() * getNumRows() * 10 % getNumRows());
 		int c = (int)(Math.random() * getNumCols() * 10 % getNumCols());
 		Location loc = new Location(r,c);
-		if(get(loc) == 0) return loc;
+		if (get(loc) == 0) {
+			return loc;
+		}
 		return getRandomOffLocation();
 	}
 	
@@ -129,7 +138,7 @@ public abstract class Grid {
 		int size = snakeLines.size();
 		SnakeLine snake = new SnakeLine(size + 1);
 		snakeLines.add(snake);
-		for(int x = 0; x < 5; x++) {
+		for (int x = 0; x < 5; x++) {
 			snake.addLast(loc);
 			loc = getNeighborPoint(loc, snake.getDirection().opposite());
 		}
@@ -151,7 +160,7 @@ public abstract class Grid {
 		this.set(loc, num);
 	}
 	
-	protected class SnakeLine extends SnakeList<Location>{
+	protected class SnakeLine {
 		
 		private final int num;
 		private Direction snakeDirection = Direction.NORTH;;
@@ -159,6 +168,7 @@ public abstract class Grid {
 		private long startTime, endTime, startPauseTime, endPauseTime;
 		private boolean canTurn = true;
 		private int extraTail = 0;
+		private Deque<Location> nodes = new LinkedList<Location>();
 		
 		public SnakeLine(int num) {
 			super();
@@ -166,23 +176,27 @@ public abstract class Grid {
 			this.startTime = System.currentTimeMillis();
 		}
 		
-		public Direction getDirection() {return snakeDirection;}
-		public int getNum() {return num;}
-		public int getScore() {return score;}
-		public boolean canTurn() {return canTurn;}
-		public void setCanTurn(boolean b) {canTurn = b;}
+		public Direction getDirection() { return snakeDirection; }
+		public int getNum() { return num; }
+		public int getScore() { return score; }
+		public boolean canTurn() { return canTurn; }
+		public void setCanTurn(boolean b) { canTurn = b; }
 		
 		public void setDirection(Direction direction) {
 			snakeDirection = direction;
 		}
 		
+		public Location getFirst() { return nodes.getFirst(); }
+		public Location getLast() { return nodes.getLast(); }
+		public boolean contains(Location loc) { return nodes.contains(loc); }
+		
 		public void addFirst(Location loc) {
-			super.addFirst(loc);
+			nodes.addFirst(loc);
 			set(loc, num);
 		}
 		
 		public void addLast(Location loc) {
-			super.addLast(loc);
+			nodes.addLast(loc);
 			set(loc, num);
 		}
 		
@@ -191,9 +205,9 @@ public abstract class Grid {
 				extraTail--; 
 				return;
 			}
-			Location loc = getLast();
+			Location loc = nodes.getLast();
 			set(loc, 0);
-			super.removeLast();
+			nodes.removeLast();
 		}
 		
 		public void pause() {
@@ -210,7 +224,7 @@ public abstract class Grid {
 			
 			long elasped = (endTime - startTime) - (endPauseTime - startPauseTime);
 			
-			score += (size() / 4) + (50000 / (scoreMultiplier * (int)elasped));
+			score += (nodes.size() / 4) + (50000 / (scoreMultiplier * (int)elasped));
 			endPauseTime = startPauseTime = 0;
 			startTime = System.currentTimeMillis();
 		}	
