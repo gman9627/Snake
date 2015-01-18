@@ -32,13 +32,7 @@ public class SpeedGrid extends Grid{
 		else if(snake.contains(next)) setGameOver(1); 
 		else {
 			snake.addFirst(next);
-			Location last1 = snake.getLast();
-			snake.removeLast();
-			Location last2 = snake.getLast();
-			int direction = this.getDirectionToward(last2, last1);
-			snake.addLast(last1);
-			snake.addLast(last2);
-			snake.addLast(this.getNeighborPoint(last2, direction));
+			snake.growTail();
 			this.setEatLoction(1);
 			snake.adjustScore();
 		}
@@ -48,18 +42,6 @@ public class SpeedGrid extends Grid{
 	public Color getColor(int num) {
 		if(num == 0) return Color.white;
 		else return Color.gray;
-	}
-	
-	private int getDirectionToward(Location loc1, Location loc2) {
-		int dx = loc2.col - loc1.col;
-		int dy = loc2.row - loc1.row;  
-	    int angle = (int)Math.toDegrees(Math.atan2(-dy, dx));
-	    int compassAngle = 90 - angle;  
-	    compassAngle += 22;
-	    if (compassAngle < 0) 
-	    	compassAngle += 360;
-	    return compassAngle / 45 * 45;
-		  
 	}
 
 }

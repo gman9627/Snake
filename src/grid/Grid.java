@@ -9,7 +9,25 @@ import list.SnakeList;
 
 public abstract class Grid {
 	
-	public static final int NORTH = 0, EAST = 90, SOUTH = 180, WEST = 270;
+	//private static final int NORTH = 0, EAST = 90, SOUTH = 180, WEST = 270;
+	public static enum Direction {
+		NORTH, EAST, SOUTH, WEST;
+
+		public Direction opposite() {
+			switch (this) {
+			case NORTH:
+				return SOUTH;
+			case EAST:
+				return WEST;
+			case SOUTH:
+				return NORTH;
+			case WEST:
+				return EAST;
+			}
+			return null;
+		}
+	}
+	
 
 	protected final int row, col, originalSpeed;
 	private final int[][] grid;
@@ -47,8 +65,8 @@ public abstract class Grid {
 	public int getNumCols() {return col;}
 	public int getOriginalSpeed() {return originalSpeed;}
 	public int getNumPlayers() {return snakeLines.size();}
-	public void setDirection(int num, int direction) {getSnakeLine(num).setDirection(direction);}
-	public int getDirection(int num) {return getSnakeLine(num).getDirection();}
+	public void setDirection(int num, Direction direction) {getSnakeLine(num).setDirection(direction);}
+	public Direction getDirection(int num) {return getSnakeLine(num).getDirection();}
 	public int getScore(int num) {return getSnakeLine(num).getScore();}
 	public int getSpeed() {return speed;}
 	public boolean canTurn(int num) {return getSnakeLine(num).canTurn();}
@@ -93,14 +111,17 @@ public abstract class Grid {
 		return getRandomOffLocation();
 	}
 	
-	protected Location getNeighborPoint(Location loc, int direction) {
-		while(direction < 0) direction += 360;
-		while(direction >= 360) direction -= 360;
-		direction = direction - (direction % 90);
-		if(direction == Grid.NORTH) return new Location(loc.row - 1, loc.col);
-		if(direction == Grid.EAST) return new Location(loc.row, loc.col + 1);
-		if(direction == Grid.SOUTH) return new Location(loc.row + 1, loc.col);
-		if(direction == Grid.WEST) return new Location(loc.row, loc.col - 1);
+	protected Location getNeighborPoint(Location loc, Direction direction) {
+		switch (direction) {
+		case NORTH:
+			return new Location(loc.row - 1, loc.col);
+		case EAST:
+			return new Location(loc.row, loc.col + 1);
+		case SOUTH:
+			return new Location(loc.row + 1, loc.col);
+		case WEST:
+			return new Location(loc.row, loc.col - 1);
+		}
 		return null;
 	}
 	
@@ -110,7 +131,7 @@ public abstract class Grid {
 		snakeLines.add(snake);
 		for(int x = 0; x < 5; x++) {
 			snake.addLast(loc);
-			loc = getNeighborPoint(loc, snake.getDirection() - 180);
+			loc = getNeighborPoint(loc, snake.getDirection().opposite());
 		}
 	}
 	
@@ -133,29 +154,26 @@ public abstract class Grid {
 	protected class SnakeLine extends SnakeList<Location>{
 		
 		private final int num;
-		private int snakeDirection, score;
+		private Direction snakeDirection = Direction.NORTH;;
+		private int score = 0;
 		private long startTime, endTime, startPauseTime, endPauseTime;
-		private boolean canTurn;
+		private boolean canTurn = true;
+		private int extraTail = 0;
 		
 		public SnakeLine(int num) {
 			super();
 			this.num = num;
-			this.snakeDirection = Grid.NORTH;
-			this.score = 0;
-			this.canTurn = true;
 			this.startTime = System.currentTimeMillis();
 		}
 		
-		public int getDirection() {return snakeDirection;}
+		public Direction getDirection() {return snakeDirection;}
 		public int getNum() {return num;}
 		public int getScore() {return score;}
 		public boolean canTurn() {return canTurn;}
 		public void setCanTurn(boolean b) {canTurn = b;}
 		
-		public void setDirection(int d) {
-			snakeDirection = d - (d % 90);
-			while(snakeDirection < 0) snakeDirection += 360;
-			while(snakeDirection >= 360) snakeDirection -= 360;
+		public void setDirection(Direction direction) {
+			snakeDirection = direction;
 		}
 		
 		public void addFirst(Location loc) {
@@ -169,14 +187,22 @@ public abstract class Grid {
 		}
 		
 		public void removeLast() {
+			if (extraTail > 0) {
+				extraTail--; 
+				return;
+			}
 			Location loc = getLast();
 			set(loc, 0);
 			super.removeLast();
 		}
 		
 		public void pause() {
-			if(!isPaused()) startPauseTime += System.currentTimeMillis();
-			else endPauseTime += System.currentTimeMillis();
+			if (!isPaused()) {
+				startPauseTime += System.currentTimeMillis();
+			}
+			else {
+				endPauseTime += System.currentTimeMillis();
+			}
 		}
 		
 		public void adjustScore() {
@@ -188,6 +214,12 @@ public abstract class Grid {
 			endPauseTime = startPauseTime = 0;
 			startTime = System.currentTimeMillis();
 		}	
+		
+		public void growTail() {
+			extraTail++;
+		}
+		
+		
 	}
 	
 	class Location {

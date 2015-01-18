@@ -1,6 +1,7 @@
 package main;
 
 import grid.Grid;
+import grid.Grid.Direction;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -185,22 +186,34 @@ public class GamePanel extends JPanel implements KeyListener, Runnable{
 		public void keyPressed(KeyEvent e) {
 			if(grid.isPaused() || grid.isGameOver() || !grid.canTurn(num)) return;
 			int key = e.getKeyCode();
-			int direction = grid.getDirection(num);
-			if(key == keys[0]) {
-				if(direction == Grid.WEST) grid.setDirection(num, direction + 90);
-				else if(direction == Grid.EAST) grid.setDirection(num, direction - 90);
+			Direction direction = grid.getDirection(num);
+			if (key == keys[0]) {
+				switch (direction) {
+				case EAST:
+				case WEST:
+					grid.setDirection(num, Direction.NORTH);
+				}
 			}
-			else if(key == keys[1]) {
-				if(direction == Grid.NORTH) grid.setDirection(num, direction + 90);
-				else if(direction == Grid.SOUTH) grid.setDirection(num, direction - 90);
+			else if (key == keys[1]) {
+				switch (direction) {
+				case NORTH:
+				case SOUTH:
+					grid.setDirection(num, Direction.EAST);
+				}
 			}
-			else if(key == keys[2]) {
-				if(direction == Grid.WEST) grid.setDirection(num, direction - 90);
-				else if(direction == Grid.EAST) grid.setDirection(num, direction + 90);
+			else if (key == keys[2]) {
+				switch (direction) {
+				case EAST:
+				case WEST:
+					grid.setDirection(num, Direction.SOUTH);
+				}
 			}
-			else if(key == keys[3]) {
-				if(direction == Grid.NORTH) grid.setDirection(num, direction - 90);
-				else if(direction == Grid.SOUTH) grid.setDirection(num, direction + 90);
+			else if (key == keys[3]) {
+				switch (direction) {
+				case NORTH:
+				case SOUTH:
+					grid.setDirection(num, Direction.WEST);
+				}
 			}
 			grid.setCanTurn(num, false);
 		}
