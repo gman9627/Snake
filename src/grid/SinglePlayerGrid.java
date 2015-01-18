@@ -8,6 +8,11 @@ public class SinglePlayerGrid extends Grid {
 	
 	public SinglePlayerGrid(int row, int col, int speed) {
 		super(row, col, speed);
+	}
+	
+	@Override
+	public void newGame() {
+		super.newGame();
 		Location loc = new Location((row / 2 + 1), (col / 2 + 1));
 		this.addSnake(loc);
 		this.setEatLoction(1);

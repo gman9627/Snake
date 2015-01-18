@@ -8,6 +8,11 @@ public class SpeedGrid extends Grid{
 
 	public SpeedGrid(int row, int col, int speed) {
 		super(row, col, speed);
+	}
+	
+	@Override
+	public void newGame() {
+		super.newGame();
 		this.scoreMultiplier = 9;
 		Location loc = new Location((row / 2 + 1), (col / 2 + 1));
 		this.addSnake(loc);

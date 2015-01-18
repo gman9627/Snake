@@ -9,10 +9,14 @@ public class TwoPlayerGrid extends Grid {
 
 	public TwoPlayerGrid(int row, int col, int speed) {
 		super(row, col, speed);
-		// TODO Auto-generated constructor stub
-		Location loc[] = {new Location((row / 2 + 1), (col / 4 + 1)),
-						  new Location((row / 2 + 1), col - (col / 4) + 1)};
-		for(int x = 2; x >= 1; x--) {
+	}
+	
+	@Override
+	public void newGame() {
+		super.newGame();
+		Location loc[] = { new Location((row / 2 + 1), (col / 4 + 1)),
+				new Location((row / 2 + 1), col - (col / 4) + 1) };
+		for (int x = 2; x >= 1; x--) {
 			addSnake(loc[x - 1]);
 			this.setEatLoction(x);
 		}

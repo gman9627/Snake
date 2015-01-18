@@ -166,7 +166,7 @@ public class GamePanel extends JPanel implements KeyListener, Runnable{
 		if(key == KeyEvent.VK_SPACE || key == KeyEvent.VK_P)
 			grid.pause();
 		else if(key == KeyEvent.VK_N) 
-			setGrid(Configuration.getNewGame(grid));	
+			grid.newGame();	
 	}
 	public void keyReleased(KeyEvent arg0) {}
 	public void keyTyped(KeyEvent arg0) {}

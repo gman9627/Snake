@@ -11,7 +11,7 @@ public abstract class Grid {
 	
 	public static final int NORTH = 0, EAST = 90, SOUTH = 180, WEST = 270;
 
-	private final int row, col, originalSpeed;
+	protected final int row, col, originalSpeed;
 	private final int[][] grid;
 	protected boolean gameOver, pause;
 	protected int speed, scoreMultiplier;
@@ -21,16 +21,20 @@ public abstract class Grid {
 		this.row = row;
 		this.col = col;
 		this.speed = originalSpeed = speed;
-		snakeLines = new ArrayList();
 		grid = new int[row][col];
+		newGame();
+	}
+	
+	public void newGame() {
+		snakeLines = new ArrayList();
 		gameOver = pause = false;
 		for(int r = 0; r < row; r++) {
 			for(int c = 0; c < col; c++) {
 				grid[r][c] = 0;
 			}
 		}
-		if(getSpeed() >= 200) scoreMultiplier = 6;
-		else if(getSpeed() >= 150) scoreMultiplier = 5;
+		if (getSpeed() >= 200) scoreMultiplier = 6;
+		else if (getSpeed() >= 150) scoreMultiplier = 5;
 		else scoreMultiplier = 4;	
 		scoreMultiplier *= 2;
 		
@@ -53,7 +57,7 @@ public abstract class Grid {
 	
 	protected SnakeLine getSnakeLine(int num) {
 		num = num - 1;
-		if(num >= snakeLines.size()) num = snakeLines.size() - 1;
+		if (num >= snakeLines.size()) num = snakeLines.size() - 1;
 		return snakeLines.get(num);
 	}
 	protected void set(Location loc, int num) {grid[loc.row][loc.col] = num;}

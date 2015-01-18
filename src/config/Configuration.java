@@ -3,14 +3,6 @@ package config;
 import grid.*;
 
 public class Configuration {
-
-	public static Grid getNewGame(Grid grid) {
-		int row = grid.getNumRows(), col = grid.getNumCols(), speed = grid.getOriginalSpeed();
-		if(grid instanceof SpeedGrid) return new SpeedGrid(row, col, speed);
-		if(grid instanceof SinglePlayerGrid) return new SinglePlayerGrid(row, col, speed);
-		if(grid instanceof TwoPlayerGrid) return new TwoPlayerGrid(row, col, speed);
-		return null;
-	}
 	
 	public static Grid getBeginner() {
 		return new SinglePlayerGrid(32, 64, 200);

@@ -58,7 +58,7 @@ public class Main{
 		JMenuItem newGame = new JMenuItem("New Game");
 		newGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panel.setGrid(Configuration.getNewGame(panel.getGrid()));
+				panel.getGrid().newGame();
 		}});
 		
 		JMenuItem beginner = new JMenuItem("Beginner");
